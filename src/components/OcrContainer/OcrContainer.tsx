@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { ImageUploader } from '@/components/ImageUploader/ImageUploader';
 import { OcrResult } from '@/components/OcrResult/OcrResult';
+import { ChatDisplay } from '@/components/ChatDisplay/ChatDisplay';
 import { recognizeImage } from '@/services/ocr-service';
 
 export function OcrContainer() {
@@ -50,6 +51,13 @@ export function OcrContainer() {
         error={error}
         previewUrl={previewUrl}
       />
+
+      {ocrText && (
+        <ChatDisplay
+          ocrText={ocrText}
+          onConfirm={() => {}}
+        />
+      )}
     </div>
   );
 }
