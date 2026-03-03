@@ -427,3 +427,83 @@ pnpm add -D @types/uuid
 **版本**: 0.1.0
 **创建日期**: 2026-03-03
 **依赖文档**: @.claude/implementation/0.1.0/ocr.md
+
+---
+
+## Todo List
+
+### 类型定义
+- [ ] 创建 `src/types/chat.ts`
+- [ ] 定义 `MessageItem` 接口（id、speaker、nickname、content）
+- [ ] 定义 `ChatData` 接口（messages、metadata）
+- [ ] 定义 `ParseResult` 接口（success、data、error）
+
+### 工具函数
+- [ ] 创建 `src/utils/chat-parser.ts`
+- [ ] 实现 `parseChatText()` 函数
+- [ ] 实现对话格式正则匹配（`/^(对方|自己|未知)\((.+?)\):\s*(.*)$/`）
+- [ ] 实现非对话信息分隔符匹配（`/^---\s*非对话信息\s*---$/`）
+- [ ] 处理边界情况：空输入、无有效对话、缺少分隔符等
+- [ ] 为每条消息生成 UUID
+
+### 依赖安装
+- [ ] 安装 `uuid` 包（`pnpm add uuid`）
+- [ ] 安装 `@types/uuid` 类型定义（`pnpm add -D @types/uuid`）
+
+### 组件开发
+- [ ] 创建 `src/components/MessageBubble/MessageBubble.tsx`
+- [ ] 实现消息气泡组件（对方左对齐灰色，自己右对齐蓝色）
+- [ ] 实现昵称显示（对方显示真实昵称，自己显示"自己"）
+- [ ] 实现未知消息的黄色边框警告样式
+- [ ] 实现多行消息支持（`whitespace-pre-wrap`）
+- [ ] 创建 `src/components/MetadataSection/MetadataSection.tsx`
+- [ ] 实现非对话信息展示组件（灰色卡片列表）
+- [ ] 创建 `src/components/ChatDisplay/ChatDisplay.tsx`
+- [ ] 实现主容器组件，接收 `ocrText` 和 `onConfirm` props
+- [ ] 调用 `parseChatText()` 解析文本
+- [ ] 渲染消息气泡列表
+- [ ] 渲染非对话信息区域
+- [ ] 实现"确认聊天内容"按钮（预留 onClick 事件）
+
+### 样式实现
+- [ ] 对方气泡：左对齐、灰色背景（`bg-muted`）
+- [ ] 自己气泡：右对齐、蓝色背景（`bg-primary`）、白色文字
+- [ ] 昵称位置：对方左上、自己右上
+- [ ] 未知消息：黄色边框、警告图标
+- [ ] 非对话信息：灰色背景卡片（`bg-muted/50`）
+- [ ] 响应式布局：移动端气泡宽度 90%，桌面端 60%
+- [ ] 确认按钮：右对齐，`variant="default"`
+
+### 集成到现有代码
+- [ ] 在 `OcrResult` 组件下方集成 `ChatDisplay`
+- [ ] 将 `ocrText` 传递给 `ChatDisplay`
+- [ ] 实现"确认聊天内容"按钮的空函数占位
+
+### 错误处理
+- [ ] 空输入时显示"暂无对话内容"提示
+- [ ] 无有效对话时显示警告："未识别到有效对话,请检查截图内容"
+- [ ] 消息数量超过 200 条时显示 Toast 警告
+- [ ] 昵称长度超过 20 字符时截断并显示省略号
+
+### 功能测试
+- [ ] 测试：解析正常对话文本，生成 `ChatData`
+- [ ] 测试：对方和自己消息的左右对齐显示
+- [ ] 测试：昵称正确显示（对方真实昵称、自己显示"自己"）
+- [ ] 测试：非对话信息单独展示
+- [ ] 测试：边界情况（空输入、无有效对话、未知说话人）
+- [ ] 测试：长消息和多行消息的正确显示
+- [ ] 测试：超过 200 条消息的警告提示
+- [ ] 测试：响应式布局（移动端和桌面端）
+- [ ] 测试：确认按钮可点击（当前无实际操作）
+
+### 性能优化（可选）
+- [ ] 消息数量 > 100 时考虑虚拟滚动
+- [ ] 解析性能测试：100 条消息 < 100ms
+
+### 代码质量
+- [ ] 所有注释使用中文
+- [ ] 无 TypeScript `any` 类型
+- [ ] 无 `console.log` 调试代码
+- [ ] 通过 ESLint 检查
+- [ ] 组件 Props 类型单独定义为 interface
+
