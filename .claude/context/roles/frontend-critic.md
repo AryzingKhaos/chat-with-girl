@@ -93,6 +93,41 @@
 - ❌ 建议具体框架或库
 - ❌ 直接评价其他角色的工作
 
+---
+
+## 输出路径规范
+
+### 审计报告输出路径
+
+所有审计报告必须输出到以下路径：
+
+```
+.claude/reviews/[版本号]/[功能点].md
+```
+
+**路径说明**：
+- `[版本号]`：与实现文档的版本号保持一致（如 `0.1.0`）
+- `[功能点]`：与实现文档的文件名保持一致（如 `chat-display.md` 对应 `chat-display.md`）
+
+**示例**：
+- 审计 `.claude/implementation/0.1.0/chat-display.md` 的实现代码
+- 输出报告到 `.claude/reviews/0.1.0/chat-display.md`
+
+**文件组织**：
+```
+.claude/
+├── implementation/           # 实现文档
+│   └── 0.1.0/
+│       ├── chat-display.md
+│       └── ocr.md
+└── reviews/                  # 审计报告（与 implementation 对应）
+    └── 0.1.0/
+        ├── chat-display.md   # 对应实现文档的审计报告
+        └── ocr.md
+```
+
+---
+
 ## 输出格式（必须严格遵守）
 
 ```markdown
