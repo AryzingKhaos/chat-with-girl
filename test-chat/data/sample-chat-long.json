@@ -1,0 +1,244 @@
+{
+  "messages": [
+    {
+      "id": "1",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "今天天气真好!"
+    },
+    {
+      "id": "2",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "是啊,要不要出去走走?"
+    },
+    {
+      "id": "3",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "好啊,你觉得去哪好?"
+    },
+    {
+      "id": "4",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "我想去公园看看,听说最近樱花开了"
+    },
+    {
+      "id": "5",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "哇!我也想去!听说很美"
+    },
+    {
+      "id": "6",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "那我们下午去吧"
+    },
+    {
+      "id": "7",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "好的!几点出发?"
+    },
+    {
+      "id": "8",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "3点怎么样"
+    },
+    {
+      "id": "9",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "可以,我去换身衣服"
+    },
+    {
+      "id": "10",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "嗯嗯,穿好看点"
+    },
+    {
+      "id": "11",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "哈哈,知道啦"
+    },
+    {
+      "id": "12",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "我去准备点吃的,顺便买点饮料"
+    },
+    {
+      "id": "13",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "太贴心了!我想喝奶茶"
+    },
+    {
+      "id": "14",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "好的,什么口味?"
+    },
+    {
+      "id": "15",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "珍珠奶茶,少糖"
+    },
+    {
+      "id": "16",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "收到"
+    },
+    {
+      "id": "17",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "对了,你有相机吗?"
+    },
+    {
+      "id": "18",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "有的,我带上"
+    },
+    {
+      "id": "19",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "太好了!可以拍美美的照片"
+    },
+    {
+      "id": "20",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "嗯,给你拍"
+    },
+    {
+      "id": "21",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "哈哈,你也要拍"
+    },
+    {
+      "id": "22",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "好啊,一起拍"
+    },
+    {
+      "id": "23",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "嗯嗯,那我换好衣服就出门了"
+    },
+    {
+      "id": "24",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "好的,我去你家楼下等你"
+    },
+    {
+      "id": "25",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "不用不用,我们公园门口见吧"
+    },
+    {
+      "id": "26",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "那好,3点见"
+    },
+    {
+      "id": "27",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "好的,一会见~"
+    },
+    {
+      "id": "28",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "到了"
+    },
+    {
+      "id": "29",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "我也到了,你在哪?"
+    },
+    {
+      "id": "30",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "在南门"
+    },
+    {
+      "id": "31",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "我在北门,等我一下"
+    },
+    {
+      "id": "32",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "好的,不急"
+    },
+    {
+      "id": "33",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "到了!看到你了"
+    },
+    {
+      "id": "34",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "哈哈,看到你了,这边"
+    },
+    {
+      "id": "35",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "你今天也穿得很好看啊"
+    },
+    {
+      "id": "36",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "哈哈谢谢,你也是"
+    },
+    {
+      "id": "37",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "走吧,去看樱花"
+    },
+    {
+      "id": "38",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "好,奶茶给你"
+    },
+    {
+      "id": "39",
+      "speaker": "other",
+      "nickname": "小红",
+      "content": "谢谢!太贴心了"
+    },
+    {
+      "id": "40",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "应该的"
+    }
+  ]
+}
