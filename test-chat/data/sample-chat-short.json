@@ -1,0 +1,22 @@
+{
+  "messages": [
+    {
+      "id": "1",
+      "speaker": "other",
+      "nickname": "打铁的朋友",
+      "content": "你的梦想是什么？"
+    },
+    {
+      "id": "2",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "成为亿万富翁"
+    },
+    {
+      "id": "3",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "和我爸一样"
+    }
+  ]
+}

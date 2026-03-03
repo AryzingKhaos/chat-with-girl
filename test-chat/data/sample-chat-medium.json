@@ -1,0 +1,76 @@
+{
+  "messages": [
+    {
+      "id": "1",
+      "speaker": "other",
+      "nickname": "灵魂挚友",
+      "content": "晚上去飞茶叶么❤️"
+    },
+    {
+      "id": "2",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "好呀"
+    },
+    {
+      "id": "3",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "很喜欢这种感觉"
+    },
+    {
+      "id": "4",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "我们是心有灵犀的一对喔"
+    },
+    {
+      "id": "5",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "晚上去博物馆看展览吧"
+    },
+    {
+      "id": "6",
+      "speaker": "other",
+      "nickname": "灵魂挚友",
+      "content": "哇"
+    },
+    {
+      "id": "7",
+      "speaker": "other",
+      "nickname": "灵魂挚友",
+      "content": "好啊"
+    },
+    {
+      "id": "8",
+      "speaker": "other",
+      "nickname": "灵魂挚友",
+      "content": "感觉很刺激"
+    },
+    {
+      "id": "9",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "那我们约在博物馆门口见？"
+    },
+    {
+      "id": "10",
+      "speaker": "other",
+      "nickname": "灵魂挚友",
+      "content": "可以啊，几点？"
+    },
+    {
+      "id": "11",
+      "speaker": "self",
+      "nickname": "自己",
+      "content": "7点怎么样"
+    },
+    {
+      "id": "12",
+      "speaker": "other",
+      "nickname": "灵魂挚友",
+      "content": "完美！到时候见~"
+    }
+  ]
+}
