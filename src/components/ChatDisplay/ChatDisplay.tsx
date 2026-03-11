@@ -1,24 +1,68 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { parseChatText } from '@/utils/chat-parser';
 import { MessageBubble } from '@/components/MessageBubble/MessageBubble';
 import { MetadataSection } from '@/components/MetadataSection/MetadataSection';
+import { AiProviderSelector } from '@/components/AiProviderSelector/AiProviderSelector';
+import { AnalysisResult } from '@/components/AnalysisResult/AnalysisResult';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
+import { analyzeChat } from '@/services/ai-analysis-service';
+import { toast } from 'sonner';
+import type { AiProvider, AnalysisResult as AnalysisResultType } from '@/types/ai-analysis';
 
 interface ChatDisplayProps {
   ocrText: string;
-  onConfirm: () => void;
 }
 
 /**
  * 对话展示组件
  */
-export function ChatDisplay({ ocrText, onConfirm }: ChatDisplayProps) {
+export function ChatDisplay({ ocrText }: ChatDisplayProps) {
+  const [provider, setProvider] = useState<AiProvider>('chatgpt');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResultType | null>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+
   // 解析 OCR 文本
   const parseResult = useMemo(() => parseChatText(ocrText), [ocrText]);
+
+  const handleAnalyze = async () => {
+    if (!parseResult.success || !parseResult.data) {
+      toast.error('解析失败,无法分析');
+      return;
+    }
+
+    const { messages } = parseResult.data;
+
+    if (messages.length === 0) {
+      toast.error('暂无对话内容,无法分析');
+      return;
+    }
+
+    const hasOtherMessages = messages.some(msg => msg.speaker === 'other');
+    if (!hasOtherMessages) {
+      toast.error('对话中缺少对方的消息,无法分析');
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setAnalysisError(null);
+
+    try {
+      const result = await analyzeChat(messages, provider);
+      setAnalysisResult(result);
+      toast.success('分析完成');
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : '分析失败,请稍后重试';
+      setAnalysisError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
 
   if (!parseResult.success || !parseResult.data) {
     return (
@@ -61,7 +105,7 @@ export function ChatDisplay({ ocrText, onConfirm }: ChatDisplayProps) {
   const showWarning = messages.length > 200;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* 警告提示 */}
       {showWarning && (
         <Alert>
@@ -87,16 +131,31 @@ export function ChatDisplay({ ocrText, onConfirm }: ChatDisplayProps) {
           ))}
         </ul>
 
-        {/* 确认按钮 */}
-        <div className="flex justify-end pt-4 border-t">
-          <Button onClick={onConfirm}>
-            确认聊天内容
+        {/* 确认按钮和 AI 选择器 */}
+        <div className="flex items-center justify-between pt-4 border-t gap-4">
+          <AiProviderSelector
+            value={provider}
+            onChange={setProvider}
+            disabled={isAnalyzing}
+          />
+          <Button
+            onClick={handleAnalyze}
+            disabled={isAnalyzing}
+          >
+            {isAnalyzing ? '分析中...' : '确认聊天内容'}
           </Button>
         </div>
       </div>
 
       {/* 非对话信息区域 */}
       <MetadataSection metadata={metadata} />
+
+      {/* AI 分析结果 */}
+      <AnalysisResult
+        result={analysisResult}
+        isLoading={isAnalyzing}
+        error={analysisError}
+      />
     </div>
   );
 }

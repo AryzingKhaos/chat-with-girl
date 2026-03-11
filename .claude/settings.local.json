@@ -24,7 +24,11 @@
       "Bash(tree:*)",
       "Bash(npx tsc:*)",
       "Bash(pnpm dev)",
-      "Bash(pnpm run lint:*)"
+      "Bash(pnpm run lint:*)",
+      "Bash(npx shadcn@latest add:*)"
     ]
+  },
+  "enabledPlugins": {
+    "code-review@claude-plugins-official": true
   }
 }

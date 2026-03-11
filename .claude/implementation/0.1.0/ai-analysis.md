@@ -212,12 +212,18 @@ Route Handler (服务端)
 ```
 接收 MessageItem[]
     ↓
+⚠️ 服务端预处理：找到对方最后一条消息
+    ├─ 从消息列表末尾向前遍历
+    ├─ 找到第一条 speaker === 'other' 且 content 非空的消息
+    └─ 记为 lastOtherMessage
+    ↓
 转换为对话文本格式
     ↓
 示例:
 "对方(小红): 今天天气真好!
 自己: 是啊,要不要出去走走?
-对方(小红): 好啊,你觉得去哪好?"
+对方(小红): 好啊,你觉得去哪好?
+自己: 我觉得去公园不错!"
     ↓
 构建 System Prompt
     ↓
@@ -226,19 +232,23 @@ System:
 返回 JSON 格式结果,包含:
 1. mood: 对方心情状态
 2. personality: 对方性格特征
-3. replyStrategy: 针对最后一句话的回复策略"
+3. replyStrategy: 针对对方最后一句话的回复策略
+   注意: replyStrategy.context 必须使用 User Prompt 中
+   明确标注的「对方最后一句话」,不是对话末尾的最后一条消息"
     ↓
-构建 User Prompt
+构建 User Prompt（携带预处理结果）
     ↓
 User:
-"[对话文本]
+"请分析以下聊天记录:
 
-请严格按照以下 JSON Schema 返回:
-{
-  mood: { status, confidence, evidence[], description },
-  personality: { traits[], confidence, evidence[], description, note? },
-  replyStrategy: { context, strategy, suggestions[], warnings[] }
-}"
+[对话文本]
+
+⚠️ 重要提示：对方最后一句话是：
+「[lastOtherMessage.content]」
+（这是对方发送的最后一条消息，对话末尾可能还有"自己"发出的消息，请忽略那些）
+
+请严格按照 JSON Schema 返回分析结果。
+其中 replyStrategy.context 请直接使用上方标注的「对方最后一句话」内容。"
     ↓
 发送给 AI API
 ```
@@ -347,17 +357,34 @@ User:
 
 ---
 
-### 7. 对方最后一句话为空
+### 7. 对话末尾是"自己"的消息
 
-**场景**: 对话列表最后一条消息 `content` 为空字符串
+**场景**: 聊天记录最后几条消息均由"自己"发出，对方最后一条消息不在末尾
 
 **处理**:
-- 向前查找最后一条非空的对方消息
-- 如果所有对方消息均为空,`replyStrategy.context` 设置为"(对方未发送有效消息)"
+- 服务端预处理阶段，从消息列表末尾向前遍历
+- 找到第一条 `speaker === 'other'` 且 `content` 非空的消息
+- 将其作为 `lastOtherMessage`，在 User Prompt 中明确标注
+- 示例：
+  ```
+  对方(小红): 好啊,你觉得去哪好?   ← 这是 lastOtherMessage
+  自己: 我觉得去公园不错!
+  自己: 你觉得呢?                 ← 对话末尾是"自己"发的
+  ```
 
 ---
 
-### 8. AI 返回的建议数量不足
+### 8. 对方最后一句话为空
+
+**场景**: 从末尾向前遍历，找到的对方消息 `content` 为空字符串
+
+**处理**:
+- 继续向前查找，直到找到 `content` 非空的对方消息
+- 如果所有对方消息均为空，`replyStrategy.context` 设置为"(对方未发送有效消息)"，`strategy` 和 `suggestions` 返回默认提示
+
+---
+
+### 9. AI 返回的建议数量不足
 
 **场景**: AI 仅返回 1-2 条建议,少于预期的 3-5 条
 
@@ -856,152 +883,151 @@ app/api/analyze/
 
 ## Todo List
 
-### ⚠️ Step 1: 测试脚本开发（最优先）
+### ⚠️ Step 1: 测试脚本开发（最优先）✅
 
 #### 1.1 测试目录和数据准备
-- [ ] 创建测试目录结构（`test-chat/scripts`, `test-chat/data`, `test-chat/results`）
-- [ ] 从 `test-images/results-structured/*.txt` 提取对话内容
-- [ ] 创建 `test-chat/data/sample-chat-short.json`（3-5 条消息）
-- [ ] 创建 `test-chat/data/sample-chat-medium.json`（10-15 条消息）
-- [ ] 创建 `test-chat/data/sample-chat-long.json`（30-50 条消息）
-- [ ] 创建 `test-chat/scripts/README.md` 测试脚本说明文档
+- [x] 创建测试目录结构（`test-chat/scripts`, `test-chat/data`, `test-chat/results`）
+- [x] 从 `test-images/results-structured/*.txt` 提取对话内容
+- [x] 创建 `test-chat/data/sample-chat-short.json`（3-5 条消息）
+- [x] 创建 `test-chat/data/sample-chat-medium.json`（10-15 条消息）
+- [x] 创建 `test-chat/data/sample-chat-long.json`（30-50 条消息）
+- [x] 创建 `test-chat/scripts/README.md` 测试脚本说明文档
 
 #### 1.2 ChatGPT 测试脚本
-- [ ] 创建 `test-chat/scripts/test-chatgpt.mjs`
-- [ ] 实现读取测试数据（`*.json`）
-- [ ] 实现调用 ChatGPT API（`gpt-4o-mini` 模型）
-- [ ] 实现构建 System Prompt 和 User Prompt
-- [ ] 实现 JSON Schema 验证（使用 Zod）
-- [ ] 实现保存结果到 `test-chat/results/chatgpt-*.json`
-- [ ] 实现生成测试报告 `test-chat/results/chatgpt-report.md`
-- [ ] 记录成功率、耗时、Token 消耗、分析质量评估
+- [x] 创建 `test-chat/scripts/test-chatgpt.mjs`
+- [x] 实现读取测试数据（`*.json`）
+- [x] 实现调用 ChatGPT API（`gpt-4o-mini` 模型）
+- [x] 实现构建 System Prompt 和 User Prompt
+- [x] 实现 JSON Schema 验证（使用 Zod）
+- [x] 实现保存结果到 `test-chat/results/chatgpt-*.json`
+- [x] 实现生成测试报告 `test-chat/results/chatgpt-report.md`
+- [x] 记录成功率、耗时、Token 消耗、分析质量评估
 
 #### 1.3 Gemini 测试脚本
-- [ ] 创建 `test-chat/scripts/test-gemini.mjs`
-- [ ] 实现读取测试数据（`*.json`）
-- [ ] 实现调用 Gemini API（`gemini-2.0-flash-exp` 模型）
-- [ ] 实现构建 System Prompt 和 User Prompt
-- [ ] 实现 JSON Schema 验证（使用 Zod）
-- [ ] 实现保存结果到 `test-chat/results/gemini-*.json`
-- [ ] 实现生成测试报告 `test-chat/results/gemini-report.md`
-- [ ] 记录成功率、耗时、Token 消耗、分析质量评估
+- [x] 创建 `test-chat/scripts/test-gemini.mjs`
+- [x] 实现读取测试数据（`*.json`）
+- [x] 实现调用 Gemini API（使用 `gemini-2.5-flash` 模型）
+- [x] 实现构建 System Prompt 和 User Prompt
+- [x] 实现 JSON Schema 验证（使用 Zod）
+- [x] 实现保存结果到 `test-chat/results/gemini-*.json`
+- [x] 实现生成测试报告 `test-chat/results/gemini-report.md`
+- [x] 记录成功率、耗时、Token 消耗、分析质量评估
 
 #### 1.4 测试执行和验证
-- [ ] 运行 `node test-chatgpt.mjs`，验证 ChatGPT 返回格式
-- [ ] 运行 `node test-gemini.mjs`，验证 Gemini 返回格式
-- [ ] 人工检查分析结果的准确性和实用性
-- [ ] 验证 JSON Schema 格式完全符合预期
-- [ ] 记录边界情况（短对话、单方对话）的处理效果
-- [ ] 确认 Token 消耗和费用在可接受范围
-- [ ] 决定是否需要优化 Prompt
+- [x] 运行 `node test-gemini.mjs`，验证 Gemini 返回格式
+- [x] 人工检查分析结果的准确性和实用性
+- [x] 验证 JSON Schema 格式完全符合预期
+- [x] 记录边界情况（短对话、单方对话）的处理效果
+- [x] 确认 Token 消耗和费用在可接受范围
+- [x] Prompt 已优化（明确 type 字段枚举值）
 
 ---
 
-### Step 2: 类型定义
-- [ ] 创建 `src/types/ai-analysis.ts`
-- [ ] 定义 `AiProvider` 类型（`'chatgpt' | 'gemini'`）
-- [ ] 定义 `AiAnalysisRequest` 接口
-- [ ] 定义 `AiAnalysisResponse` 接口
-- [ ] 定义 `AnalysisResult` 接口
-- [ ] 定义 `MoodAnalysis` 接口（status、confidence、evidence、description）
-- [ ] 定义 `PersonalityAnalysis` 接口（traits、confidence、evidence、description、note）
-- [ ] 定义 `ReplyStrategy` 接口（context、strategy、suggestions、warnings）
-- [ ] 定义 `ReplySuggestion` 接口（id、type、content、explanation、riskLevel）
-- [ ] 定义 `SuggestionType` 类型（humor、caring、deep、casual、flirty）
+### Step 2: 类型定义 ✅
+- [x] 创建 `src/types/ai-analysis.ts`
+- [x] 定义 `AiProvider` 类型（`'chatgpt' | 'gemini'`）
+- [x] 定义 `AiAnalysisRequest` 接口
+- [x] 定义 `AiAnalysisResponse` 接口
+- [x] 定义 `AnalysisResult` 接口
+- [x] 定义 `MoodAnalysis` 接口（status、confidence、evidence、description）
+- [x] 定义 `PersonalityAnalysis` 接口（traits、confidence、evidence、description、note）
+- [x] 定义 `ReplyStrategy` 接口（context、strategy、suggestions、warnings）
+- [x] 定义 `ReplySuggestion` 接口（id、type、content、explanation、riskLevel）
+- [x] 定义 `SuggestionType` 类型（humor、caring、deep、casual、flirty）
 
 ---
 
-### Step 3: 依赖安装
-- [ ] 安装 OpenAI SDK（`pnpm add openai`）
-- [ ] 安装 Zod（`pnpm add zod`）
-- [ ] 安装 Shadcn UI 组件（`npx shadcn@latest add select progress badge skeleton`）
-- [ ] 配置环境变量：在 `.env.local` 中添加 `OPENAI_API_KEY`
+### Step 3: 依赖安装 ✅
+- [x] 安装 OpenAI SDK（`pnpm add openai`）
+- [x] 安装 Zod（`pnpm add zod`）
+- [x] 安装 Shadcn UI 组件（`npx shadcn@latest add select progress badge skeleton`）
+- [x] 配置环境变量：在 `.env.local` 中添加 `OPENAI_API_KEY`（可选）
 
 ---
 
-### Step 4: 工具函数
+### Step 4: 工具函数 ✅
 
 #### 4.1 消息格式化
-- [ ] 创建 `src/utils/message-formatter.ts`
-- [ ] 实现 `formatMessagesForAi()` 函数
-- [ ] 将 `MessageItem[]` 转换为对话文本格式
-- [ ] 测试格式化输出是否正确
+- [x] 创建 `src/utils/message-formatter.ts`
+- [x] 实现 `formatMessagesForAi()` 函数
+- [x] 将 `MessageItem[]` 转换为对话文本格式
+- [x] 测试格式化输出是否正确
 
 #### 4.2 JSON Schema 验证
-- [ ] 创建 `src/utils/analysis-validator.ts`
-- [ ] 使用 Zod 定义 `AnalysisResultSchema`
-- [ ] 实现 `validateAnalysisResult()` 函数
-- [ ] 测试验证功能（正常数据、异常数据）
+- [x] 创建 `src/utils/analysis-validator.ts`
+- [x] 使用 Zod 定义 `AnalysisResultSchema`
+- [x] 实现 `validateAnalysisResult()` 函数
+- [x] 测试验证功能（正常数据、异常数据）
 
 ---
 
-### Step 5: Route Handler 实现
-- [ ] 创建 `app/api/analyze/route.ts`
-- [ ] 实现 `POST` 请求处理函数
-- [ ] 验证输入：检查 `messages` 非空、包含对方消息
-- [ ] 实现 API Key 验证（ChatGPT/Gemini）
-- [ ] 实现根据 `provider` 选择 API
-- [ ] 实现 ChatGPT 调用逻辑（使用 `gpt-4o-mini`）
-- [ ] 实现 Gemini 调用逻辑（使用 `gemini-2.0-flash-exp`）
-- [ ] 实现 Prompt 构建（System + User）
-- [ ] 实现 JSON 响应解析
-- [ ] 使用 Zod 验证 AI 返回的 JSON
-- [ ] 实现错误处理（API Key 缺失、调用失败、格式错误等）
-- [ ] 实现超时控制（30 秒）
-- [ ] 实现并发控制（防止重复请求）
+### Step 5: Route Handler 实现 ✅
+- [x] 创建 `app/api/analyze/route.ts`
+- [x] 实现 `POST` 请求处理函数
+- [x] 验证输入：检查 `messages` 非空、包含对方消息
+- [x] 实现 API Key 验证（ChatGPT/Gemini）
+- [x] 实现根据 `provider` 选择 API
+- [x] 实现 ChatGPT 调用逻辑（使用 `gpt-4o-mini`）
+- [x] 实现 Gemini 调用逻辑（使用 `gemini-2.5-flash`）
+- [x] 实现 Prompt 构建（System + User）
+- [x] 实现 JSON 响应解析
+- [x] 使用 Zod 验证 AI 返回的 JSON
+- [x] 实现错误处理（API Key 缺失、调用失败、格式错误等）
+- [x] 实现超时控制（30 秒）
 
 ---
 
-### Step 6: 前端服务层
-- [ ] 创建 `src/services/ai-analysis-service.ts`
-- [ ] 实现 `analyzeChat()` 函数
-- [ ] 封装 `fetch /api/analyze` 调用
-- [ ] 实现错误处理和类型转换
-- [ ] 测试服务层调用
+### Step 6: 前端服务层 ✅
+- [x] 创建 `src/services/ai-analysis-service.ts`
+- [x] 实现 `analyzeChat()` 函数
+- [x] 封装 `fetch /api/analyze` 调用
+- [x] 实现错误处理和类型转换
 
 ---
 
-### Step 7: UI 组件开发
+### Step 7: UI 组件开发 ✅
 
 #### 7.1 AI 提供商选择器
-- [ ] 创建 `src/components/AiProviderSelector/AiProviderSelector.tsx`
-- [ ] 实现下拉选择器（使用 Shadcn `Select`）
-- [ ] 支持 ChatGPT 和 Gemini 选择
-- [ ] 实现 `value` 和 `onChange` props
-- [ ] 实现 `disabled` 状态
+- [x] 创建 `src/components/AiProviderSelector/AiProviderSelector.tsx`
+- [x] 实现下拉选择器（使用 Shadcn `Select`）
+- [x] 支持 ChatGPT 和 Gemini 选择
+- [x] 实现 `value` 和 `onChange` props
+- [x] 实现 `disabled` 状态
 
 #### 7.2 分析结果卡片组件
-- [ ] 创建 `src/components/AnalysisResult/MoodCard.tsx`
-- [ ] 实现心情状态展示（状态、置信度进度条、依据、描述）
-- [ ] 创建 `src/components/AnalysisResult/PersonalityCard.tsx`
-- [ ] 实现性格特征展示（特征标签、置信度、依据、描述、备注）
-- [ ] 创建 `src/components/AnalysisResult/ReplyStrategyCard.tsx`
-- [ ] 实现回复策略展示（核心策略、建议列表、注意事项）
+- [x] 创建 `src/components/AnalysisResult/MoodCard.tsx`
+- [x] 实现心情状态展示（状态、置信度进度条、依据、描述）
+- [x] 创建 `src/components/AnalysisResult/PersonalityCard.tsx`
+- [x] 实现性格特征展示（特征标签、置信度、依据、描述、备注）
+- [x] 创建 `src/components/AnalysisResult/ReplyStrategyCard.tsx`
+- [x] 实现回复策略展示（核心策略、建议列表、注意事项）
 
 #### 7.3 回复建议卡片
-- [ ] 创建 `src/components/ReplySuggestion/ReplySuggestion.tsx`
-- [ ] 实现单条建议展示（类型标签、内容、解释、风险等级）
-- [ ] 实现复制按钮（点击复制回复文案）
-- [ ] 实现类型标签颜色区分（humor、caring、deep 等）
-- [ ] 实现风险等级颜色标识（low 绿色、medium 黄色、high 红色）
+- [x] 创建 `src/components/ReplySuggestion/ReplySuggestionCard.tsx`
+- [x] 实现单条建议展示（类型标签、内容、解释、风险等级）
+- [x] 实现复制按钮（点击复制回复文案）
+- [x] 实现类型标签颜色区分（humor、caring、deep 等）
+- [x] 实现风险等级颜色标识（low 绿色、medium 黄色、high 红色）
 
 #### 7.4 分析结果容器
-- [ ] 创建 `src/components/AnalysisResult/AnalysisResult.tsx`
-- [ ] 实现主容器组件，渲染三个卡片
-- [ ] 实现加载状态（骨架屏 Skeleton）
-- [ ] 实现错误状态展示
-- [ ] 实现卡片折叠/展开功能（可选）
+- [x] 创建 `src/components/AnalysisResult/AnalysisResult.tsx`
+- [x] 实现主容器组件，渲染三个卡片
+- [x] 实现加载状态（骨架屏 Skeleton）
+- [x] 实现错误状态展示
 
 ---
 
-### Step 8: 集成到 ChatDisplay
-- [ ] 修改 `src/components/ChatDisplay/ChatDisplay.tsx`
-- [ ] 添加 `AiProviderSelector` 组件（初始值 `'chatgpt'`）
-- [ ] 实现"确认聊天内容"按钮点击事件
-- [ ] 调用 `analyzeChat()` 服务
-- [ ] 管理分析状态（loading、result、error）
-- [ ] 在"确认聊天内容"下方渲染 `AnalysisResult`
-- [ ] 实现"重新分析"按钮（切换 AI 后重新分析）
+### Step 8: 集成到 ChatDisplay ✅
+- [x] 修改 `src/components/ChatDisplay/ChatDisplay.tsx`
+- [x] 添加 `AiProviderSelector` 组件（初始值 `'chatgpt'`）
+- [x] 实现"确认聊天内容"按钮点击事件
+- [x] 调用 `analyzeChat()` 服务
+- [x] 管理分析状态（loading、result、error）
+- [x] 在"确认聊天内容"下方渲染 `AnalysisResult`
+- [x] 实现 `analyzeChat()` 函数
+- [x] 封装 `fetch /api/analyze` 调用
+- [x] 实现错误处理和类型转换
+- [x] 测试服务层调用
 
 ---
 
@@ -1089,6 +1115,63 @@ app/api/analyze/
 - [ ] 记录 Prompt 优化过程（如有）
 - [ ] 记录已知问题和限制
 - [ ] 更新 README（如有项目 README）
+
+---
+
+### Bug 修复：replyStrategy 分析对象错误 📝 (2026-03-06)
+
+**问题根源**：`app/api/analyze/route.ts` 中的 `SYSTEM_PROMPT` 只描述了"对方最后一句话"，但未说明如何处理对话末尾是"自己"消息的情况。AI 可能直接取整个对话的最后一条消息，若最后几条都是"自己"发的，则 `context` 和 `strategy` 的分析对象错误。
+
+**修复方案：服务端预处理 + 明确写入 User Prompt**
+
+不依赖 AI 自行判断，在 Route Handler 中主动找到正确的消息，再通过 User Prompt 明确传给 AI。
+
+#### 修复 1：Route Handler 中添加预处理（`app/api/analyze/route.ts`）
+
+- [x] 在格式化消息之前，添加查找"对方最后一条消息"的逻辑
+  ```typescript
+  // 从末尾向前遍历，找到第一条对方发送且内容非空的消息
+  const lastOtherMessage = [...messages]
+    .reverse()
+    .find(msg => msg.speaker === 'other' && msg.content.trim().length > 0);
+  ```
+- [x] 处理边界情况：`lastOtherMessage` 为 `undefined` 时，设置默认文本"(对方未发送有效消息)"
+- [x] 将 `lastOtherMessage.content` 传入 User Prompt 构建函数
+
+#### 修复 2：修改 User Prompt 模板（同文件 `callChatGPT` 和 `callGemini`）
+
+- [x] 在 User Prompt 中明确标注对方最后一句话：
+  ```
+  请分析以下聊天记录:
+
+  [对话文本]
+
+  ⚠️ 重要提示：对方最后一句话是：
+  「[lastOtherMessage.content]」
+  （这是对方发送的最后一条消息，对话末尾可能还有"自己"发出的消息，请忽略那些）
+
+  请严格按照 JSON Schema 返回分析结果。
+  其中 replyStrategy.context 请直接使用上方标注的「对方最后一句话」内容。
+  ```
+- [x] `callChatGPT` 和 `callGemini` 两处 User Prompt 均需同步更新
+
+#### 修复 3：修改 SYSTEM_PROMPT（同文件第 8 行起）
+
+- [x] 在 `replyStrategy` 的说明中补充：
+  ```
+  "replyStrategy": {
+    "context": "必须使用 User Prompt 中明确标注的「对方最后一句话」，不是对话末尾的最后一条消息",
+    ...
+  }
+  ```
+
+#### 修复后回归测试
+
+- [ ] 测试：对话末尾是"自己"发的消息时，`context` 正确取对方最后一句话
+- [ ] 测试：对话末尾连续 3 条都是"自己"发的，`context` 依然正确
+- [ ] 测试：对方最后一句话就在末尾（正常情况），`context` 不受影响
+- [ ] 测试：所有对方消息均为空时，`context` 返回默认文本
+- [ ] 测试：ChatGPT 和 Gemini 两个 provider 都能正确处理
 
 ---
 

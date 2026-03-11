@@ -55,7 +55,6 @@ export function OcrContainer() {
       {ocrText && (
         <ChatDisplay
           ocrText={ocrText}
-          onConfirm={() => {}}
         />
       )}
     </div>

@@ -46,7 +46,8 @@ export function parseChatText(ocrText: string): ParseResult {
     let isInMetadataSection = false;
 
     // 正则表达式
-    const messageRegex = /^(对方|自己|未知)\((.+?)\):\s*(.*)$/;
+    // 括号部分整体可选，同时支持全角/半角括号，昵称可为空
+    const messageRegex = /^(对方|自己|未知)(?:[（(]([^）)]*)[）)])?:\s*(.*)$/;
     const separatorRegex = /^---\s*非对话信息\s*---$/;
 
     // 按行分割文本
@@ -75,7 +76,7 @@ export function parseChatText(ocrText: string): ParseResult {
       // 正则匹配对话格式
       const match = trimmedLine.match(messageRegex);
       if (match) {
-        const [, speakerType, nickname, content] = match;
+        const [, speakerType, rawNickname, content] = match;
 
         // 确定说话人角色
         let speaker: 'self' | 'other';
@@ -85,6 +86,8 @@ export function parseChatText(ocrText: string): ParseResult {
           speaker = 'other';
         }
 
+        // 昵称可能为空（无括号格式），回退到说话人标识
+        const nickname = rawNickname ?? speakerType;
         // 昵称长度限制,安全截断
         const truncatedNickname = safeTruncate(nickname, MAX_NICKNAME_LENGTH);
 
@@ -96,15 +99,8 @@ export function parseChatText(ocrText: string): ParseResult {
           content: content || '',
         });
       } else {
-        // 无法匹配对话格式
-        // 如果之前已有消息,追加到最后一条消息的内容(处理多行消息)
-        // 否则归类为非对话信息
-        if (messages.length > 0) {
-          const lastMessage = messages[messages.length - 1];
-          lastMessage.content += '\n' + trimmedLine;
-        } else {
-          metadata.push(trimmedLine);
-        }
+        // 无法匹配对话格式，直接归类为非对话信息
+        metadata.push(trimmedLine);
       }
     }
 
