@@ -25,7 +25,9 @@
       "Bash(npx tsc:*)",
       "Bash(pnpm dev)",
       "Bash(pnpm run lint:*)",
-      "Bash(npx shadcn@latest add:*)"
+      "Bash(npx shadcn@latest add:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   },
   "enabledPlugins": {
