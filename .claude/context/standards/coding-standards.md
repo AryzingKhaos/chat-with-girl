@@ -1,4 +1,4 @@
-# TronLink Extension Pro 开发规范
+# 开发规范
 
 > **强制性规范**: 所有代码开发必须严格遵守本文档的规范。详细说明和示例请参考 [project.md](./project.md)。
 
