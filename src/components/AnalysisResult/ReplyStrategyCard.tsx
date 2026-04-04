@@ -14,12 +14,12 @@ interface ReplyStrategyCardProps {
  */
 export function ReplyStrategyCard({ replyStrategy }: ReplyStrategyCardProps) {
   return (
-    <Card className="p-6 space-y-4">
-      <h3 className="text-lg font-semibold">3. 回复策略</h3>
+    <Card className="surface-card space-y-4 p-6">
+      <h3 className="text-lg font-semibold text-slate-800">3. 回复策略</h3>
 
       <div className="space-y-2">
         <p className="text-sm text-muted-foreground">对方最后说:</p>
-        <p className="text-sm font-medium pl-4 border-l-2 border-primary">
+        <p className="border-l-2 border-cyan-300 pl-4 text-sm font-medium text-slate-700">
           {replyStrategy.context}
         </p>
       </div>
@@ -30,7 +30,7 @@ export function ReplyStrategyCard({ replyStrategy }: ReplyStrategyCardProps) {
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-medium">💡 建议回复 (点击复制):</p>
+        <p className="text-sm font-medium text-slate-700">建议回复 (点击复制):</p>
         <div className="space-y-3">
           {replyStrategy.suggestions.map((suggestion) => (
             <ReplySuggestionCard key={suggestion.id} suggestion={suggestion} />
@@ -41,12 +41,12 @@ export function ReplyStrategyCard({ replyStrategy }: ReplyStrategyCardProps) {
       {replyStrategy.warnings.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 text-yellow-600" />
-            <p className="text-sm font-medium text-yellow-600">注意事项:</p>
+            <AlertCircle className="h-4 w-4 text-amber-600" />
+            <p className="text-sm font-medium text-amber-700">注意事项:</p>
           </div>
           <ul className="space-y-1">
             {replyStrategy.warnings.map((warning, index) => (
-              <li key={index} className="text-sm text-muted-foreground pl-4">
+              <li key={index} className="pl-4 text-sm text-muted-foreground">
                 • {warning}
               </li>
             ))}

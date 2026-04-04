@@ -3,7 +3,7 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Copy, AlertCircle } from 'lucide-react';
+import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import type { ReplySuggestion, SuggestionType } from '@/types/ai-analysis';
 import { cn } from '@/lib/utils';
@@ -21,17 +21,17 @@ const typeLabels: Record<SuggestionType, string> = {
 };
 
 const typeColors: Record<SuggestionType, string> = {
-  humor: 'bg-orange-100 text-orange-800 dark:bg-orange-950 dark:text-orange-200',
-  caring: 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-200',
-  deep: 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-200',
-  casual: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
-  flirty: 'bg-pink-100 text-pink-800 dark:bg-pink-950 dark:text-pink-200',
+  humor: 'border border-amber-200 bg-amber-50 text-amber-800',
+  caring: 'border border-emerald-200 bg-emerald-50 text-emerald-800',
+  deep: 'border border-sky-200 bg-sky-50 text-sky-800',
+  casual: 'border border-slate-200 bg-slate-100 text-slate-700',
+  flirty: 'border border-rose-200 bg-rose-50 text-rose-800',
 };
 
 const riskColors = {
-  low: 'text-green-600 dark:text-green-400',
-  medium: 'text-yellow-600 dark:text-yellow-400',
-  high: 'text-red-600 dark:text-red-400',
+  low: 'text-emerald-600',
+  medium: 'text-amber-600',
+  high: 'text-red-600',
 };
 
 const riskLabels = {
@@ -50,7 +50,7 @@ export function ReplySuggestionCard({ suggestion }: ReplySuggestionCardProps) {
   };
 
   return (
-    <Card className="p-4 space-y-3 hover:shadow-md transition-shadow">
+    <Card className="surface-card space-y-3 p-4 transition-shadow hover:shadow-[0_20px_40px_-30px_rgba(14,116,144,0.8)]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Badge className={cn('text-xs', typeColors[suggestion.type])}>
@@ -71,9 +71,9 @@ export function ReplySuggestionCard({ suggestion }: ReplySuggestionCardProps) {
       </div>
 
       <div className="space-y-2">
-        <p className="text-sm font-medium leading-relaxed">{suggestion.content}</p>
-        <p className="text-xs text-muted-foreground flex items-start gap-1">
-          <span className="shrink-0">💭</span>
+        <p className="text-sm font-medium leading-relaxed text-slate-700">{suggestion.content}</p>
+        <p className="flex items-start gap-1 text-xs text-muted-foreground">
+          <span className="mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-500" />
           <span>{suggestion.explanation}</span>
         </p>
       </div>

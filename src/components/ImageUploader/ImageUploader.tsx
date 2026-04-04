@@ -80,9 +80,9 @@ export function ImageUploader({ onImageSelect, isLoading }: ImageUploaderProps) 
   return (
     <Card
       className={cn(
-        'flex flex-col items-center justify-center p-8 border-2 border-dashed cursor-pointer transition-colors',
-        isDragging && 'border-primary bg-primary/5',
-        isLoading && 'opacity-50 cursor-not-allowed'
+        'surface-card flex cursor-pointer flex-col items-center justify-center border-2 border-dashed border-cyan-200/80 p-8 transition-all duration-200',
+        isDragging && 'border-cyan-500 bg-cyan-50/70 shadow-[0_24px_48px_-32px_rgba(6,182,212,0.8)]',
+        isLoading && 'cursor-not-allowed opacity-65'
       )}
       onClick={!isLoading ? handleClick : undefined}
       onDrop={handleDrop}
@@ -98,18 +98,18 @@ export function ImageUploader({ onImageSelect, isLoading }: ImageUploaderProps) 
         disabled={isLoading}
       />
 
-      <div className="flex flex-col items-center gap-2">
+      <div className="flex flex-col items-center gap-3">
         {isLoading ? (
           <Loader2 className="h-10 w-10 animate-spin text-primary" />
         ) : (
-          <Upload className="h-10 w-10 text-muted-foreground" />
+          <Upload className="h-10 w-10 text-cyan-600" />
         )}
 
-        <Button variant="outline" disabled={isLoading} type="button">
+        <Button variant="outline" disabled={isLoading} type="button" className="font-semibold">
           {isLoading ? '识别中...' : '点击或拖拽上传图片'}
         </Button>
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-slate-500">
           支持 JPG、PNG、WebP 格式，最大 5MB
         </p>
       </div>

@@ -17,17 +17,17 @@ export function MetadataSection({ metadata }: MetadataSectionProps) {
 
   return (
     <div className="mt-6">
-      <h3 className="text-sm font-medium mb-2 text-muted-foreground">
+      <h3 className="mb-2 text-sm font-semibold text-slate-600">
         非对话信息
       </h3>
-      <Card className="bg-muted/50 p-4">
-        <ul className="space-y-1 text-sm text-muted-foreground">
+      <Card className="surface-card bg-white/70 p-4">
+        <ul className="space-y-1 text-sm text-slate-600">
           {displayMetadata.map((item, index) => (
             <li key={`metadata-${index}-${item.substring(0, 20)}`}>- {item}</li>
           ))}
         </ul>
         {metadata.length > 50 && (
-          <p className="text-xs text-muted-foreground mt-2">
+          <p className="mt-2 text-xs text-slate-500">
             还有 {metadata.length - 50} 条信息未显示
           </p>
         )}

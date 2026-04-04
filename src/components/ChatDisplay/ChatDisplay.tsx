@@ -80,7 +80,7 @@ export function ChatDisplay({ ocrText }: ChatDisplayProps) {
   // 边界情况: 空输入
   if (messages.length === 0 && metadata.length === 0) {
     return (
-      <div className="text-center text-muted-foreground py-8">
+      <div className="rounded-2xl border border-white/70 bg-white/70 py-8 text-center text-muted-foreground backdrop-blur-sm">
         暂无对话内容
       </div>
     );
@@ -117,12 +117,12 @@ export function ChatDisplay({ ocrText }: ChatDisplayProps) {
       )}
 
       {/* 对话内容区域 */}
-      <div className="space-y-4 p-4 border rounded-lg bg-background">
-        <h3 className="text-sm font-medium mb-4">对话内容</h3>
+      <div className="surface-card space-y-4 p-4 sm:p-6">
+        <h3 className="mb-4 text-sm font-semibold text-slate-700">对话内容</h3>
 
         {/* 消息列表 */}
         <ul
-          className="space-y-3 max-h-[600px] overflow-y-auto"
+          className="max-h-[600px] space-y-3 overflow-y-auto rounded-xl border border-cyan-100/80 bg-white/60 p-3"
           role="list"
           aria-label="聊天消息列表"
         >
@@ -132,7 +132,7 @@ export function ChatDisplay({ ocrText }: ChatDisplayProps) {
         </ul>
 
         {/* 确认按钮和 AI 选择器 */}
-        <div className="flex items-center justify-between pt-4 border-t gap-4">
+        <div className="flex flex-col gap-3 border-t border-cyan-100 pt-4 sm:flex-row sm:items-center sm:justify-between">
           <AiProviderSelector
             value={provider}
             onChange={setProvider}
@@ -141,6 +141,7 @@ export function ChatDisplay({ ocrText }: ChatDisplayProps) {
           <Button
             onClick={handleAnalyze}
             disabled={isAnalyzing}
+            className="sm:min-w-36"
           >
             {isAnalyzing ? '分析中...' : '确认聊天内容'}
           </Button>

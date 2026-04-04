@@ -21,7 +21,7 @@ interface AiProviderSelectorProps {
 export function AiProviderSelector({ value, onChange, disabled }: AiProviderSelectorProps) {
   return (
     <Select value={value} onValueChange={onChange} disabled={disabled}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-full sm:w-[180px]">
         <SelectValue placeholder="选择 AI" />
       </SelectTrigger>
       <SelectContent>

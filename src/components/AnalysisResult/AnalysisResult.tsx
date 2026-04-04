@@ -21,7 +21,7 @@ export function AnalysisResult({ result, isLoading, error }: AnalysisResultProps
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <h2 className="text-xl font-bold">AI 分析结果</h2>
+        <h2 className="text-xl font-bold text-slate-800">AI 分析结果</h2>
         <div className="space-y-4">
           <Skeleton className="h-48 w-full" />
           <Skeleton className="h-48 w-full" />
@@ -46,7 +46,7 @@ export function AnalysisResult({ result, isLoading, error }: AnalysisResultProps
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold">AI 分析结果</h2>
+      <h2 className="text-xl font-bold text-slate-800">AI 分析结果</h2>
       <div className="space-y-4">
         <MoodCard mood={result.mood} />
         <PersonalityCard personality={result.personality} />

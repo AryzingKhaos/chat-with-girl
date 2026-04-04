@@ -42,29 +42,29 @@ export function OcrResult({ text, error, previewUrl }: OcrResultProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {/* 图片预览 */}
       {previewUrl && (
-        <Card className="p-4">
-          <h3 className="text-sm font-medium mb-2">原图预览</h3>
+        <Card className="surface-card p-4">
+          <h3 className="mb-2 text-sm font-semibold text-slate-700">原图预览</h3>
           <img
             src={previewUrl}
             alt="上传的图片"
-            className="w-full h-auto rounded"
+            className="h-auto w-full rounded-xl border border-white/70"
           />
         </Card>
       )}
 
       {/* 识别结果 */}
       {text && (
-        <Card className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-sm font-medium">识别结果</h3>
+        <Card className="surface-card p-4">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-slate-700">识别结果</h3>
             <Button
               variant="outline"
               size="sm"
               onClick={handleCopy}
-              className="gap-2"
+              className="gap-2 font-semibold"
             >
               {copied ? (
                 <>
@@ -79,7 +79,7 @@ export function OcrResult({ text, error, previewUrl }: OcrResultProps) {
               )}
             </Button>
           </div>
-          <div className="whitespace-pre-wrap text-sm bg-muted p-3 rounded max-h-96 overflow-y-auto">
+          <div className="max-h-96 overflow-y-auto rounded-xl border border-cyan-100 bg-white/80 p-3 font-mono text-sm leading-6 whitespace-pre-wrap">
             {text}
           </div>
         </Card>

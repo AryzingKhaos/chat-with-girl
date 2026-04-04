@@ -24,7 +24,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       {/* 昵称 */}
       <div
         className={cn(
-          'text-xs text-muted-foreground px-2',
+          'px-2 text-xs text-slate-500',
           isSelf ? 'text-right' : 'text-left',
         )}
       >
@@ -34,10 +34,10 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       {/* 消息气泡 */}
       <div
         className={cn(
-          'rounded-lg px-4 py-2 whitespace-pre-wrap break-words min-h-[2.5rem]',
-          isSelf && 'bg-primary text-primary-foreground',
-          !isSelf && !isUnknown && 'bg-muted',
-          isUnknown && 'bg-muted border-2 border-yellow-500',
+          'min-h-[2.5rem] break-words rounded-2xl px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap shadow-[0_10px_20px_-18px_rgba(15,23,42,0.45)]',
+          isSelf && 'bg-linear-to-r from-cyan-500 via-sky-500 to-emerald-500 text-primary-foreground',
+          !isSelf && !isUnknown && 'border border-white/70 bg-white/90 text-slate-700',
+          isUnknown && 'border-2 border-amber-300 bg-amber-50 text-amber-900',
         )}
       >
         {message.content || '(空消息)'}

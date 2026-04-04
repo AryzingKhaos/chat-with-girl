@@ -40,7 +40,7 @@ export function OcrContainer() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <ImageUploader
         onImageSelect={handleImageSelect}
         isLoading={isLoading}

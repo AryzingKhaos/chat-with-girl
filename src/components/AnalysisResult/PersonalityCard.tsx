@@ -15,8 +15,8 @@ interface PersonalityCardProps {
  */
 export function PersonalityCard({ personality }: PersonalityCardProps) {
   return (
-    <Card className="p-6 space-y-4">
-      <h3 className="text-lg font-semibold">2. 对方性格特征</h3>
+    <Card className="surface-card space-y-4 p-6">
+      <h3 className="text-lg font-semibold text-slate-800">2. 对方性格特征</h3>
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
@@ -41,7 +41,7 @@ export function PersonalityCard({ personality }: PersonalityCardProps) {
           <p className="text-sm text-muted-foreground">依据:</p>
           <ul className="space-y-1">
             {personality.evidence.map((item, index) => (
-              <li key={index} className="text-sm pl-4 border-l-2 border-primary/30">
+              <li key={index} className="border-l-2 border-cyan-300/60 pl-4 text-sm">
                 {item}
               </li>
             ))}
@@ -50,9 +50,9 @@ export function PersonalityCard({ personality }: PersonalityCardProps) {
       )}
 
       {personality.note && (
-        <div className="flex items-start gap-2 p-3 bg-yellow-50 dark:bg-yellow-950 rounded-md">
-          <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400 mt-0.5 shrink-0" />
-          <p className="text-sm text-yellow-800 dark:text-yellow-200">{personality.note}</p>
+        <div className="flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3">
+          <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+          <p className="text-sm text-amber-800">{personality.note}</p>
         </div>
       )}
     </Card>
